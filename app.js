@@ -1,3 +1,3 @@
-const greeting = (user = 'noName') => console.log(`Hello, aston trainee! I'm ${user}`);
+const greeting = (user = 'Ivan') => console.log(`Hello, aston trainee from Belarus! I'm ${user}`);
 
 greeting();
