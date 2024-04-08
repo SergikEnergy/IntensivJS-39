@@ -141,3 +141,113 @@ HTTP2 использует TCP (или TLS - for secure), HTTP3 - транспо
 5. Контроль и восстановление перегрузок
 
 6. HTTP/3 имеет более высокую пропускную способность - из-за мультиплексирования запросов по одному соединению.
+
+### Способы отмены запроса
+
+##### Abort Controller - для fetch больше всего делается
+
+- для таких целей существует специальный встроенный объект: AbortController, для отмены не только fetch, но и других асинхронных задач:
+
+1. - создаем объект
+
+```javascript
+const controller = new AbortController();
+```
+
+Экземпляр имеет единственный метод abort() и единственное свойство signal.
+_При вызове abort():_ генерируется событие с именем abort на объекте controller.signal
+_свойство controller.signal.aborted становится равным true_ 2. Чтобы узнать о вызове abort(), ставим обработчики на controller.signal, чтобы отслеживать его.
+
+```javascript
+const controller = new AbortController();
+const signal = controller.signal;
+
+signal.addEventListener('abort', callback);
+```
+
+3. Вызываем метод _abort()_ - где необходимо
+
+```javascript
+const controller = new AbortController();
+const signal = controller.signal;
+
+signal.addEventListener('abort', callback);
+
+controller.abort(); //здесь выполнится callback
+```
+
+4. Для fetch-запроса из браузерного API есть доп. опция signal? рядом с хедером и т.д.
+
+```javascript
+const controller = new AbortController();
+fetch(url, {
+  signal: controller.signal,
+});
+```
+
+5. Вызываем событие и fetch отменится - и промис завершится с ошибкой - которую надо отловить
+
+```javascript
+controller.abort();
+```
+
+**AbortController** масштабируемый - т.е. может отменить несколько фетч запросов сразу
+
+```javascript
+const urls = ['url/1','url/2'...];
+
+const controller = new AbortController();
+
+const fetchList = urls.map(url => fetch(url, {
+  signal: controller.signal
+}));
+
+const results = await Promise.all(fetchJobs);
+
+// вызов controller.abort() прервёт все вызовы fetch сразу и завершит ошибкой
+// обработка ошибки от вызова abort()
+catch(err) {
+  if (err.name == 'AbortError') {
+    errorCallback();
+  } else {
+    throw err;
+  }
+}
+```
+
+**соответственно, если надо управлять гибко отменой - надо создать несколько объектов abortController**
+
+##### `abort()` в объекте запроса - для старого XMLHttpRequest.
+
+##### Промисы и async/await:
+
+При использовании промисов или async/await, можно использовать Promise.race, чтобы создать гонку между промисом запроса и промисом отмены. Как только промис отмены выполнится первым, вы сможете обработать отмену запроса.
+
+```javascript
+
+```
+
+##### Использование Axios (или других HTTP клиентов):
+
+- Некоторые HTTP клиенты, такие как Axios, предоставляют встроенные методы для отмены запросов.
+
+```javascript
+import axios from 'axios';
+
+const cancelTokenController = axios.CancelToken.source();
+
+axios
+  .get('https://api.example.com/data', { cancelToken: cancelTokenController.token })
+  .then((response) => {
+    console.log(response.data);
+  })
+  .catch((error) => {
+    if (axios.isCancel(error)) {
+      console.log('Request cancelled:', error.message);
+    } else {
+      console.log('Error:', error.message);
+    }
+  });
+
+cancelTokenController.cancel('Request cancelled manually'); //cancel event
+```
