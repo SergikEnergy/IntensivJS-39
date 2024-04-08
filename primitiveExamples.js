@@ -16,6 +16,9 @@ const str4 = `Multiline
 string
 occured`;
 const str5 = String(5);
+// const numToString = (5)..toString(); - bit prettier delete second dot and wrap in parentheses))
+//when I use one dot syntax error occurred, because number doesn't have an prop or use below example
+const numToStringParentheses = (5).toString();
 
 //number
 const numInt = 5;
