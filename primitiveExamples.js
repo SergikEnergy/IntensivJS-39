@@ -27,6 +27,7 @@ const negative = -56e8;
 
 //null
 const noValue = null;
+const notExistingHTML = document.querySelector('#non-exist-id');
 
 //undefined
 const nothing = undefined;
