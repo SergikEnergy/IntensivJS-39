@@ -271,3 +271,34 @@ axios
 
 cancelTokenController.cancel('Request cancelled manually'); //cancel event
 ```
+
+#### Функция structuredClone()
+
+<details>
+<summary>Глубокое копирование объектов в JS</summary>
+
+`structuredClone` является встроенным методом, который позволяет создавать глубокую копию объекта или сложной структуры данных - т.е. объекта window или global nodeJS. Предоставляется `Web API` в современных браузерах. Рекурсивно клонирует свойства и вложенные объекты.
+
+**Пример**
+
+```javascript
+const originalObject = {
+  name: 'John',
+  age: 30,
+  addresses: [{ street: '123 Main St', city: 'New York' }],
+};
+
+const clonedObject = window.structuredClone(originalObject) || structuredClone(originalObject);
+```
+
+**Ограничений**
+
+- Функции и методы не клонируются;
+
+- некоторые свойства, как символы или свойства с круговыми ссылками, не могут быть сериализованы и исключаются во время процесса клонирования. Полученная копия не будет содержать эти свойства.
+
+- Узлы DOM и сложные встроенные объекты: File или Blob.
+
+Для большей инфорации см. (Доку от MDN)[https://developer.mozilla.org/en-US/docs/Web/API/structuredClone]
+
+</details>
