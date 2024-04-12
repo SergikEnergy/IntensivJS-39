@@ -272,6 +272,116 @@ axios
 cancelTokenController.cancel('Request cancelled manually'); //cancel event
 ```
 
+### Объекты в JS
+
+<details>
+<summary>Методы объектов</summary>
+
+- **Создание объектов**
+
+```javascript
+const obj = {}; // литеральная запись - прямое создание
+const obj2 = new Obj(); // с помощью конструктора
+/*
+Несмотря на то, что obj и obj2 неизменные, свойства объекта можно менять, т.к. объект хранится по ссылке. Изменение внутреннего состояния не изменяет ссылку.
+Но нельзя перезаписать объект obj2='other type' //TypeError: Assignment to constant variable
+*/
+function FuncConstructor(prop1, prop2) {
+  //функция-конструктор
+  this.key1 = prop1;
+  this.key2 = prop2;
+}
+/* is the same as implicitly {
+	const this={};
+	{body function}
+	return this;
+}*/
+// обязательно вызывать только с new - если вызвать без new - просто вернет undefined;
+class ObjCreator {
+  constructor(prop1, prop2) {
+    this.key1 = prop1;
+    this.key2 = prop2;
+  }
+  //come methods
+  sayHi() {
+    return `Hi user ${this.key1}`;
+  }
+}
+//современный синтаксис - класс вместо функции конструктора
+// в данном случае вернет при вызове без new - TypeError - нельзя вызывать класс без new!!!
+
+//Использование метода Object.create
+const newObj = Object.create(prototype, props); //мы можем передать прототип - т.е. тот объект, от которого наследуемся - и таким образом мы получим доступ к его свойствам
+//props - это обязательно объект с ключами и значениями
+
+const newObj = Object.create({}, { user: 'user' }); //к пустому объекту добавим св-во user
+
+//можно добавлять дескрипторы свойств
+const newObj = Object.create({}, { name: { value: 'user', enumarable: false, writable: true, configurable: false } });
+//или включать геттеры и сеттеры
+const newObj = Object.create(
+  {},
+  {
+    name: {
+      value: '',
+      enumarable: false,
+      writable: true,
+      configurable: false,
+      get: function () {},
+      set: function () {},
+    },
+  }
+);
+
+//через Object.defineProperty(); || Object.defineProperties();
+const obj1=Object.defineProperty({}, 'user', {get:, set:, descriptors: writanle,enumarable,configurable});
+```
+
+- удаление свойств: - удаляет свойство объекта - при образении к такому св-ву вернется undefined - как и у любошо несуществующего св-ва
+
+- более структурно см. (Дескрипторы на learnJS)[https://learn.javascript.ru/descriptors-getters-setters]
+
+```javascript
+delete object.someProperty;
+delete object['property'];
+```
+
+- новый синтаксис объявления свойств (_касаемо методов_):
+
+```javascript
+const obj = {
+  name: 'defaultName',
+  sayHi: function () {
+    console.log('hi');
+  },
+}; // old
+const objNew = {
+  name: 'defaultName',
+  sayHi() {
+    console.log('hi');
+  },
+}; //new
+//when we have variables
+const name = 'name';
+const lastName = 'lastName';
+const objShort = {
+  name,
+  lastName,
+};
+//the same as {name: name, lastName:lastName};
+```
+
+- обращение к св-ву объекта через `. obj.prop` или через квадратные скобки - удобно для переменных или составных свойств (типа класса в ДОМ узлах) `obj[property] или obj['complete__className-prop']`
+
+- _ограничения_ - ключи - только строки или символы, значения - любой тип данных;
+
+</details>
+
+<details>
+<summary>Копирование объектов в JS</summary>
+
+</details>
+
 #### Функция structuredClone()
 
 <details>
@@ -291,7 +401,7 @@ const originalObject = {
 const clonedObject = window.structuredClone(originalObject) || structuredClone(originalObject);
 ```
 
-**Ограничений**
+**Ограничения**
 
 - Функции и методы не клонируются;
 
