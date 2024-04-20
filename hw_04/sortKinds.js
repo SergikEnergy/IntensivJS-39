@@ -52,24 +52,22 @@ console.log(quickSort(arr));
 
 //quickSort2 - with less memory - change source array only - not create additional
 //helper for return index
-const swipeFunc = (arr, left, right) => {
+const partIndex = (arr, left, right) => {
   const baseElement = arr[Math.floor((left + right) / 2)];
 
   while (left <= right) {
     //check left part
-    while (arr[left] < baseElement) {
-      left++;
-    }
+    while (arr[left] < baseElement) left++;
     //check right part
-    while (arr[right] > baseElement) {
-      right--;
-    }
+    while (arr[right] > baseElement) right--;
+
     if (left <= right) {
       [arr[left], arr[right]] = [arr[right], arr[left]];
       left++;
       right--;
     }
   }
+  return left;
 };
 
 // helper for quick sort
@@ -79,10 +77,10 @@ const quickSortHelper = (arr, start, end) => {
   }
 
   //find index - for replacing elements
-  const index = swipeFunc(arr, start, end);
+  const index = partIndex(arr, start, end);
 
   if (start < index - 1) {
-    quickSortHelper(arr, start, index + 1);
+    quickSortHelper(arr, start, index - 1);
   }
 
   if (index < end) {
@@ -95,5 +93,6 @@ const quickSortHelper = (arr, start, end) => {
 const quickSort2 = (arr) => {
   return quickSortHelper(arr, 0, arr.length - 1);
 };
+const arr2 = [-5, -7, -3, -8, 10, -45, 0, 0, 56, 5, 4, 3];
 
-console.log(quickSort2(arr));
+console.log(quickSort2(arr2));
