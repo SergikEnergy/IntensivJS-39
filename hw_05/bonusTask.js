@@ -9,8 +9,41 @@ fetchUrl('https://google/com&#39;)
 
 */
 
-const URL = 'https://dummyjson.com/products?limit=10';
+const realURL = 'https://dummyjson.com/products?limit=10';
+const fakeURL = 'https://google/com&#39';
 
-const fetchUrl = () => {
-  //
+const fetchUrl = (url) => {
+  let count = 0;
+  return new Promise((res, rej) => {
+    const dummyFetch = async () => {
+      try {
+        const data = await fetch(url);
+        if (data && data.ok) {
+          console.log(`Data from ${url} was getting after ${count}th attempts`);
+          count++;
+          data.json().then((result) => res(result));
+        }
+      } catch (err) {
+        console.log(err);
+        if (count < 5) {
+          count++;
+          console.log(`It's the ${count}th attempt to get data from ${url}`);
+          dummyFetch();
+        } else {
+          err.message = `rejected after ${count}th attempts`;
+          rej(err);
+        }
+      }
+    };
+
+    dummyFetch();
+  });
 };
+
+fetchUrl(realURL)
+  .then((result) => {
+    console.log(`data from url --> ${result}`);
+  })
+  .catch((err) => {
+    console.log('rejected with: ', err.message);
+  });
