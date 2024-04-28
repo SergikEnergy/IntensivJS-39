@@ -64,7 +64,7 @@ A HEAD request is useful for checking what a GET request will return before actu
 - PATCH, POST, CONNECT.
 
 <details>
-<summary>#### Коды ошибок от сервера</summary>
+<summary>#### Статус коды ответа от сервера</summary>
 
 - 1xx. Информационные 100 - 199
 
